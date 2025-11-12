@@ -1,0 +1,28 @@
+# Test Dependencies for Loan Evaluation Service
+# Install with: pip install -r tests/requirements_test.txt
+
+# Core Testing
+pytest==7.4.0
+pytest-cov==4.1.0
+pytest-timeout==2.1.0
+pytest-xdist==3.3.1
+
+# SOAP Client
+spyne==2.14.0
+zeep==4.2.1
+requests==2.31.0
+urllib3==2.0.4
+lxml==4.9.3
+
+# Code Quality (optional)
+flake8==6.0.0
+black==23.9.1
+pylint==2.17.4
+
+# Mocking & Test Fixtures
+responses==0.23.3
+faker==19.6.1
+
+# Performance Analysis (optional)
+memory-profiler==0.61.0
+line-profiler==4.0.3

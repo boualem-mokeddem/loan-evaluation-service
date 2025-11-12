@@ -1,0 +1,208 @@
+
+services:
+  ie_service:
+    build:
+      context: ./services/service_ie
+      dockerfile: Dockerfile
+    container_name: ie_service
+    ports:
+      - "5006:5006"
+    environment:
+      - PYTHONUNBUFFERED=1
+    networks:
+      - soa_network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5006/?wsdl"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 5s
+
+  crud_service:
+    build:
+      context: ./services/service_crud
+      dockerfile: Dockerfile
+    container_name: crud_service
+    ports:
+      - "5002:5002"
+    volumes:
+      - crud_data:/app/data
+    environment:
+      - PYTHONUNBUFFERED=1
+    networks:
+      - soa_network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5002/?wsdl"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 5s
+
+  business_service:
+    build:
+      context: ./services/service_business
+      dockerfile: Dockerfile
+    container_name: business_service
+    ports:
+      - "5003:5003"
+    environment:
+      - PYTHONUNBUFFERED=1
+    networks:
+      - soa_network
+    depends_on:
+      crud_service:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5003/?wsdl"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 5s
+
+  appraisal_service:
+    build:
+      context: ./services/service_appraisal
+      dockerfile: Dockerfile
+    container_name: appraisal_service
+    ports:
+      - "5005:5005"
+    environment:
+      - PYTHONUNBUFFERED=1
+    networks:
+      - soa_network
+    depends_on:
+      business_service:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5005/?wsdl"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 5s
+
+  approval_service:
+    build:
+      context: ./services/service_approval
+      dockerfile: Dockerfile
+    container_name: approval_service
+    ports:
+      - "5007:5007"
+    environment:
+      - PYTHONUNBUFFERED=1
+    networks:
+      - soa_network
+    depends_on:
+      appraisal_service:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5007/?wsdl"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 5s
+
+  notification_service:
+    build:
+      context: ./services/service_notification
+      dockerfile: Dockerfile
+    container_name: notification_service
+    ports:
+      - "5008:5008"
+    environment:
+      - PYTHONUNBUFFERED=1
+      - SENDER_EMAIL=${SENDER_EMAIL}
+      - SENDER_PASSWORD=${SENDER_PASSWORD}
+      - SMTP_SERVER=${SMTP_SERVER}
+      - SMTP_PORT=${SMTP_PORT}
+    networks:
+      - soa_network
+    depends_on:
+      approval_service:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5008/?wsdl"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 5s
+
+  orchestrator_service:
+    build:
+      context: ./services/service_orchestrator
+      dockerfile: Dockerfile
+    container_name: orchestrator_service
+    ports:
+      - "5004:5004"
+    environment:
+      - PYTHONUNBUFFERED=1
+    networks:
+      - soa_network
+    depends_on:
+      ie_service:
+        condition: service_healthy
+      crud_service:
+        condition: service_healthy
+      business_service:
+        condition: service_healthy
+      appraisal_service:
+        condition: service_healthy
+      approval_service:
+        condition: service_healthy
+      notification_service:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5004/?wsdl"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+
+  adapter_rest:
+    build:
+      context: ./services/service_adapter
+      dockerfile: Dockerfile
+    container_name: adapter_rest_service
+    ports:
+      - "5001:5001"
+    environment:
+      - PYTHONUNBUFFERED=1
+    networks:
+      - soa_network
+    depends_on:
+      orchestrator_service:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5001/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+
+  web_interface:
+    build:
+      context: ./services/interface
+      dockerfile: Dockerfile
+    container_name: web_interface_service
+    ports:
+      - "5000:5000"
+    environment:
+      - PYTHONUNBUFFERED=1
+    networks:
+      - soa_network
+    depends_on:
+      adapter_rest:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5000/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 5s
+
+networks:
+  soa_network:
+    driver: bridge
+
+volumes:
+  crud_data:
+    driver: local

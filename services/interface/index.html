@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Évaluation de Crédit Immobilier</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="header-content">
+                <h1>🏦 Évaluation de Crédit Immobilier</h1>
+                <div class="service-status">
+                    <span id="statusIndicator" class="status-dot"></span>
+                    <span id="statusText">Initialisation...</span>
+                </div>
+            </div>
+        </header>
+
+        <main>
+            <section class="form-section" id="formSection">
+                <h2>Soumettre une demande</h2>
+                <form id="loanForm">
+                    <div class="form-group">
+                        <label for="requestText">Informations de demande *</label>
+                        <textarea id="requestText" rows="9" required>CLIENT_ID:
+LOAN_AMOUNT:
+LOAN_DURATION:
+PROPERTY_ADDRESS:
+PROPERTY_DESCRIPTION:
+PROPERTY_SURFACE:
+CONSTRUCTION_YEAR:</textarea>
+                        <p class="form-help">Remplissez les valeurs après les deux points. Tous les champs sont obligatoires.</p>
+                    </div>
+
+                    <button type="submit" class="btn-submit">📊 Évaluer la demande</button>
+                </form>
+            </section>
+
+            <section class="result-section" id="resultSection" style="display: none;">
+                <div class="decision-brick">
+                    <div class="brick-header">
+                        <h3 id="decisionTitle"></h3>
+                        <p id="decisionNumber" class="decision-number"></p>
+                    </div>
+                    <div class="brick-content">
+                        <div class="motif-section">
+                            <p class="motif-label">Motif:</p>
+                            <p id="decisionReason" class="motif-text"></p>
+                        </div>
+                        <button type="button" class="btn-toggle-details" onclick="toggleAnalysis()">
+                            📖 Afficher l'analyse détaillée
+                        </button>
+                    </div>
+                </div>
+
+                <div class="analysis-section" id="analysisSection" style="display: none;">
+                    <h3>📝 Analyse Détaillée</h3>
+                    <div class="analysis-box" id="explanations"></div>
+                </div>
+
+                <div class="summary-grid">
+                    <div class="summary-card">
+                        <h4>💳 Score de Crédit</h4>
+                        <p id="creditScore" class="score-value">-</p>
+                    </div>
+                    <div class="summary-card">
+                        <h4>✓ Solvabilité</h4>
+                        <p id="solvencyStatus">-</p>
+                    </div>
+                    <div class="summary-card">
+                        <h4>🏠 Évaluation Propriété</h4>
+                        <p id="propertyValue">-</p>
+                    </div>
+                    <div class="summary-card">
+                        <h4>⚖️ Niveau de Risque</h4>
+                        <p id="riskLevel">-</p>
+                    </div>
+                </div>
+
+                <div class="email-notification">
+                    <p>📧 <strong>Copie de cette notification</strong> a été envoyée à : <span id="clientEmail" class="email-highlight">-</span></p>
+                </div>
+
+                <button type="button" class="btn-new-request" onclick="resetForm()">← Nouvelle demande</button>
+            </section>
+
+            <section class="loading" id="loading" style="display: none;">
+                <div class="spinner"></div>
+                <h3>Traitement en cours...</h3>
+                <div class="progress-bar">
+                    <div id="progressFill" class="progress-fill"></div>
+                </div>
+                <p id="progressText">Initialisation du traitement...</p>
+            </section>
+
+            <section class="error" id="errorSection" style="display: none;">
+                <div class="error-content">
+                    <h3>⚠️ Erreur de Traitement</h3>
+                    <p id="errorMessage"></p>
+                    <button type="button" class="btn-retry" onclick="retryRequest()">↻ Réessayer</button>
+                </div>
+            </section>
+        </main>
+
+        <footer>
+            <p>Plateforme sécurisée d'évaluation de crédit • Traitement automatisé et confidentiel</p>
+        </footer>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

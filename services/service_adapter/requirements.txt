@@ -1,0 +1,6 @@
+Flask==3.0.0
+flask-cors==4.0.0
+zeep==4.2.1
+requests==2.31.0
+spyne==2.14.0
+lxml==4.9.3

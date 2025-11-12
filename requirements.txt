@@ -1,0 +1,21 @@
+# Dependencies for SOA Loan Processing System
+# Install with: pip install -r requirements.txt
+
+# SOAP/WSDL Framework
+spyne==2.14.0
+zeep==4.2.1
+
+# Web Frameworks
+Flask==3.0.0
+Flask-CORS==4.0.0
+
+# HTTP & Networking
+requests==2.31.0
+urllib3==2.1.0
+
+# Utilities
+python-dotenv==1.0.0
+
+# Testing (optional, install with: pip install -r requirements-tests.txt)
+# pytest==7.4.3
+# pytest-cov==4.1.0
